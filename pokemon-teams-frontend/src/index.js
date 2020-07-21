@@ -49,55 +49,58 @@ document.addEventListener("DOMContentLoaded", (e) => {
 					"trainer_id": id
 				})
 			})
-			.then(resp => resp.json())
-			.then(json => displayPokemon(json));
-		});
+				.then(resp => resp.json())
+				.then(json => {if(!json.errors){
+					displayPokemon(json)}
+					else{json.errors.forEach((error) => {alert(error)})}
+				});
+		})
 
-		card.append(addPokeButton);
+			card.append(addPokeButton);
 
-		main.append(card);
-	}
+			main.append(card);
+		}
 
-//	function createForm(e){
-//		const formDiv = document.createElement("div");
-//		const h3 = document.createElement("h3");
-//		const speciesInput = document.createElement("input");
-//		const nicknameInput = document.createElement("input");
-//		const submit = document.createElement("input");
-//
-//		form.setAttribute("class", "add-pokemon-form");
-//		h3.textContent = "Create a Pokemon";
-//		speciesInput.setAttribute("type", "text");
-//		speciesInput.setAttribute("name", "species");
-//		speciesInput.setAttribute("value", "");
-//		speciesInput.setAttribute("placeholder", "Species");
-//		speciesInput.setAttribute("class", "input-text");
-//		nicknameInput.setAttribute("type", "text");
-//		nicknameInput.setAttribute("name", "nickname");
-//		nicknameInput.setAttribute("value", "");
-//		nicknameInput.setAttribute("placeholder", "Nickname");
-//		nicknameInput.setAttribute("class", "input-text");
-//		submit.setAttribute("type", "submit");
+	//	function createForm(e){
+	//		const formDiv = document.createElement("div");
+	//		const h3 = document.createElement("h3");
+	//		const speciesInput = document.createElement("input");
+	//		const nicknameInput = document.createElement("input");
+	//		const submit = document.createElement("input");
+	//
+	//		form.setAttribute("class", "add-pokemon-form");
+	//		h3.textContent = "Create a Pokemon";
+	//		speciesInput.setAttribute("type", "text");
+	//		speciesInput.setAttribute("name", "species");
+	//		speciesInput.setAttribute("value", "");
+	//		speciesInput.setAttribute("placeholder", "Species");
+	//		speciesInput.setAttribute("class", "input-text");
+	//		nicknameInput.setAttribute("type", "text");
+	//		nicknameInput.setAttribute("name", "nickname");
+	//		nicknameInput.setAttribute("value", "");
+	//		nicknameInput.setAttribute("placeholder", "Nickname");
+	//		nicknameInput.setAttribute("class", "input-text");
+	//		submit.setAttribute("type", "submit");
 
-//		form.append(h3);
-//		form.append(speciesInput);
-//		form.append(nicknameInput);
-//		form.append(submit);
-//		e.target.parentElement.append(form);
-		
-//		const formInsides = `<form class="add-pokemon-form">
-//		<h3>Create a Pokemon</h3>
-//			<input
-//				type="text"
-//				name="species"
-//				value=""
-//				placeholder="Species"
-//				class="input-text"
-//			/>
-//		</form>`;
-//		formDiv.innerHtml = formInsides;
-//		e.target.parentNode.appendChild(formDiv);
-//	}
+	//		form.append(h3);
+	//		form.append(speciesInput);
+	//		form.append(nicknameInput);
+	//		form.append(submit);
+	//		e.target.parentElement.append(form);
+
+	//		const formInsides = `<form class="add-pokemon-form">
+	//		<h3>Create a Pokemon</h3>
+	//			<input
+	//				type="text"
+	//				name="species"
+	//				value=""
+	//				placeholder="Species"
+	//				class="input-text"
+	//			/>
+	//		</form>`;
+	//		formDiv.innerHtml = formInsides;
+	//		e.target.parentNode.appendChild(formDiv);
+	//	}
 
 	function displayPokemons(json){
 		json.forEach(pokemon => displayPokemon(pokemon))
@@ -113,19 +116,33 @@ document.addEventListener("DOMContentLoaded", (e) => {
 		const releaseButton = document.createElement("button");
 
 		releaseButton.setAttribute("class", "release");
-		releaseButton.setAttribute("data-pokemon-id", `"${pokemonId}"`);
+		releaseButton.setAttribute("data-pokemon-id", `${pokemonId}`);
 		releaseButton.textContent = "Release";
+		releaseButton.addEventListener("click", (e) => {
+			fetch(POKEMONS_URL + `/${pokemonId}`, {
+				method: "DELETE"
+			})
+				.then(resp => resp.json())
+				.then(json => {
+					removePokemon(json['id']);
+					alert(`${json['nickname']} the ${json['species']} has been released!`);
+				})
+				.catch(error => console.log(error.messages))
+		})
 
 		pokeLi.textContent = `${species} (${nickname})`;
 		pokeLi.append(releaseButton);
-//		console.log(trainerCard);
+		//		console.log(trainerCard);
 		trainerCard.appendChild(pokeLi);
 	}
 
+	function removePokemon(id){
+		const pokemon = document.querySelector(`[data-pokemon-id="${id}"]`)
+		pokemon.parentElement.remove(pokemon)
+	}
 
 
 
 	getTrainers();
 	getPokemons();
-
 })
