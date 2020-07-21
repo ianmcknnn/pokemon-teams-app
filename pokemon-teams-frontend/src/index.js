@@ -39,42 +39,51 @@ document.addEventListener("DOMContentLoaded", (e) => {
 		addPokeButton.setAttribute("data-trainer-id", `${id}`);
 		addPokeButton.textContent = "Add Pokemon";
 		addPokeButton.addEventListener("click", (e) => {
-			if(!document.querySelector(`div[data-id='${id}'] .add-pokemon-form`)){
-				createForm(e)
-			}
+			fetch(POKEMONS_URL, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"Accept": "application/json"
+				},
+				body: JSON.stringify({
+					"trainer_id": id
+				})
+			})
+			.then(resp => resp.json())
+			.then(json => displayPokemon(json));
 		});
 
 		card.append(addPokeButton);
 
-		main.append(card)
+		main.append(card);
 	}
 
-	function createForm(e){
-		const form = document.createElement("form");
-		const h3 = document.createElement("h3");
-		const speciesInput = document.createElement("input");
-		const nicknameInput = document.createElement("input");
-		const submit = document.createElement("input");
+//	function createForm(e){
+//		const formDiv = document.createElement("div");
+//		const h3 = document.createElement("h3");
+//		const speciesInput = document.createElement("input");
+//		const nicknameInput = document.createElement("input");
+//		const submit = document.createElement("input");
+//
+//		form.setAttribute("class", "add-pokemon-form");
+//		h3.textContent = "Create a Pokemon";
+//		speciesInput.setAttribute("type", "text");
+//		speciesInput.setAttribute("name", "species");
+//		speciesInput.setAttribute("value", "");
+//		speciesInput.setAttribute("placeholder", "Species");
+//		speciesInput.setAttribute("class", "input-text");
+//		nicknameInput.setAttribute("type", "text");
+//		nicknameInput.setAttribute("name", "nickname");
+//		nicknameInput.setAttribute("value", "");
+//		nicknameInput.setAttribute("placeholder", "Nickname");
+//		nicknameInput.setAttribute("class", "input-text");
+//		submit.setAttribute("type", "submit");
 
-		form.setAttribute("class", "add-pokemon-form");
-		h3.textContent = "Create a Pokemon";
-		speciesInput.setAttribute("type", "text");
-		speciesInput.setAttribute("name", "species");
-		speciesInput.setAttribute("value", "");
-		speciesInput.setAttribute("placeholder", "Species");
-		speciesInput.setAttribute("class", "input-text");
-		nicknameInput.setAttribute("type", "text");
-		nicknameInput.setAttribute("name", "nickname");
-		nicknameInput.setAttribute("value", "");
-		nicknameInput.setAttribute("placeholder", "Nickname");
-		nicknameInput.setAttribute("class", "input-text");
-		submit.setAttribute("type", "submit");
-
-		form.append(h3);
-		form.append(speciesInput);
-		form.append(nicknameInput);
-		form.append(submit);
-		e.target.parentElement.append(form);
+//		form.append(h3);
+//		form.append(speciesInput);
+//		form.append(nicknameInput);
+//		form.append(submit);
+//		e.target.parentElement.append(form);
 		
 //		const formInsides = `<form class="add-pokemon-form">
 //		<h3>Create a Pokemon</h3>
@@ -87,8 +96,8 @@ document.addEventListener("DOMContentLoaded", (e) => {
 //			/>
 //		</form>`;
 //		formDiv.innerHtml = formInsides;
-//		e.target.append(formDiv);
-	}
+//		e.target.parentNode.appendChild(formDiv);
+//	}
 
 	function displayPokemons(json){
 		json.forEach(pokemon => displayPokemon(pokemon))
@@ -109,7 +118,8 @@ document.addEventListener("DOMContentLoaded", (e) => {
 
 		pokeLi.textContent = `${species} (${nickname})`;
 		pokeLi.append(releaseButton);
-		trainerCard.append(pokeLi);
+//		console.log(trainerCard);
+		trainerCard.appendChild(pokeLi);
 	}
 
 

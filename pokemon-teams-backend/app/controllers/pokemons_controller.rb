@@ -9,8 +9,8 @@ class PokemonsController < ApplicationController
   end
 
   def create
-    pokemon = Pokemon.create(pokemonParams);
-
+    pokemon = Pokemon.create(species: Faker::Games::Pokemon.name, nickname: Faker::FunnyName.name, trainer_id: params["trainer_id"]);
+    render json: pokemon
   end
 
   private
